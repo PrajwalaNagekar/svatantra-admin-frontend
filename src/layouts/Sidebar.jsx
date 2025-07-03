@@ -11,18 +11,18 @@ const Sidebar = () => {
 
     const navLinks = [
         { name: 'Dashboard', path: '/admin/dashboard', icon: <LayoutDashboard size={20} /> },
-        { name: 'Applications', path: '/admin/applications', icon: <UserCheck size={20} /> },
+        { name: 'Admissions', path: '/admin/applications', icon: <UserCheck size={20} /> },
         { name: 'Teacher Applications', path: '/admin/teacher-applications', icon: <FileText size={20} /> },
-        { name: 'Visits', path: '/admin/visits', icon: <Book size={20} /> },
-        { name: 'Enquiries', path: '/admin/enquiries', icon: <MessageCircle size={20} /> },
-        { name: 'Gallery', path: '/admin/gallery', icon: <Image size={20} /> },
+        { name: 'Visits Bookings', path: '/admin/visits', icon: <Book size={20} /> },
+        { name: 'Contact', path: '/admin/enquiries', icon: <MessageCircle size={20} /> },
+        { name: 'Campus', path: '/admin/gallery', icon: <Image size={20} /> },
         { name: 'Events', path: '/admin/events', icon: <Calendar size={20} /> },
 
     ];
 
     const handleLogout = () => {
         localStorage.removeItem('token');
-        navigate('/');
+        navigate('/');a
     };
 
     return (
