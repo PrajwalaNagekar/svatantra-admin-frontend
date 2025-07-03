@@ -39,7 +39,7 @@ const Enquiries = () => {
     <div className="p-6 md:p-10 relative">
       {loading && <FullScreenLoader />}
       <h2 className="text-3xl font-bold mb-8 text-gray-800 underline decoration-pink-500 underline-offset-8">
-        Enquiries
+        Manage Contacts
       </h2>
       {error && <p className="text-red-600">{error}</p>}
 

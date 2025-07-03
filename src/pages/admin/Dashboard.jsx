@@ -19,7 +19,6 @@ const Dashboard = () => {
     galleryImages: 0,
   });
 
-  // Example: Replace with actual API call to fetch counts
   useEffect(() => {
     const fetchCounts = async () => {
       const res = await getDashboardCounts();

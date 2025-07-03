@@ -85,10 +85,9 @@ const Gallery = () => {
       )}
       {uploading && <FullScreenLoader />}
       <h2 className="text-3xl font-bold mb-8 text-gray-800 underline decoration-pink-500 underline-offset-8">
-        Manage Gallery
+        Manage Campus
       </h2>
 
-      {/* Upload Section */}
       {/* Upload Section */}
       <div className="mb-10 flex justify-center">
         <div className="flex flex-col items-center gap-4">
