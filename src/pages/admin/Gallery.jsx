@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { uploadImage, deleteImage, getAllGalleryImages } from '../../api';
-import { Plus } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import FullScreenLoader from '../../components/loaders/FullScreenLoader';
 import PopupModal from '../../components/popupModal/PopupModal';
 
 const Gallery = () => {
   const [images, setImages] = useState([]);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
-  const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [popup, setPopup] = useState({ show: false, message: '', type: 'success' });
 
@@ -34,26 +33,31 @@ const Gallery = () => {
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setSelectedFile(file);
-    setPreview(URL.createObjectURL(file));
+    const files = Array.from(e.target.files);
+    setSelectedFiles((prev) => [...prev, ...files]);
+  };
+
+  const handleRemoveSelected = (index) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) return;
+    if (selectedFiles.length === 0) return;
+
     const formData = new FormData();
-    formData.append('images', selectedFile);
+    selectedFiles.forEach((file) => {
+      formData.append('images', file); // 'images' matches multer key
+    });
 
     setUploading(true);
     try {
       await uploadImage(formData);
-      setSelectedFile(null);
-      setPreview(null);
+      setSelectedFiles([]);
       fetchImages();
-      setPopup({ show: true, message: 'Image uploaded successfully!', type: 'success' });
+      setPopup({ show: true, message: 'Images uploaded successfully!', type: 'success' });
     } catch (error) {
       console.error('Upload failed:', error);
-      setPopup({ show: true, message: 'Failed to upload image', type: 'error' });
+      setPopup({ show: true, message: 'Failed to upload images', type: 'error' });
     } finally {
       setUploading(false);
     }
@@ -75,7 +79,7 @@ const Gallery = () => {
 
   return (
     <div className="p-6 w-full relative">
-      {loading && <FullScreenLoader />}
+      {(loading || uploading) && <FullScreenLoader />}
       {popup.show && (
         <PopupModal
           message={popup.message}
@@ -83,57 +87,64 @@ const Gallery = () => {
           onClose={() => setPopup({ ...popup, show: false })}
         />
       )}
-      {uploading && <FullScreenLoader />}
+
       <h2 className="text-3xl font-bold mb-8 text-gray-800 underline decoration-pink-500 underline-offset-8">
         Manage Campus
       </h2>
 
       {/* Upload Section */}
-      <div className="mb-10 flex justify-center">
-        <div className="flex flex-col items-center gap-4">
-          {/* File Input */}
-          <div className="relative">
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="hidden"
-              id="imageUpload"
-            />
-            <label
-              htmlFor="imageUpload"
-              className="w-32 h-32 flex items-center justify-center border-2 border-dashed border-pink-400 rounded-md cursor-pointer hover:bg-pink-50 transition"
-            >
-              {preview ? (
+      <div className="mb-10 flex flex-col items-center gap-4">
+        <input
+          type="file"
+          id="multiImageUpload"
+          multiple
+          accept="image/*"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+        <label
+          htmlFor="multiImageUpload"
+          className="w-32 h-32 flex items-center justify-center border-2 border-dashed border-pink-400 rounded-md cursor-pointer hover:bg-pink-50 transition"
+        >
+          <Plus className="text-pink-500" size={32} />
+        </label>
+
+        {selectedFiles.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+            {selectedFiles.map((file, idx) => (
+              <div key={idx} className="relative">
                 <img
-                  src={preview}
-                  alt="Preview"
-                  className="w-full h-full object-cover rounded"
+                  src={URL.createObjectURL(file)}
+                  alt={`preview-${idx}`}
+                  className="w-32 h-24 object-cover rounded shadow"
                 />
-              ) : (
-                <Plus className="text-pink-500" size={32} />
-              )}
-            </label>
+                <button
+                  onClick={() => handleRemoveSelected(idx)}
+                  className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700"
+                  title="Remove"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            ))}
           </div>
+        )}
 
-          {/* Upload Button */}
-          <button
-            onClick={handleUpload}
-            className="bg-pink-600 text-white px-6 py-2 rounded hover:bg-pink-700 transition"
-            disabled={uploading || !selectedFile}
-          >
-            {uploading ? (
-              <span className="flex items-center gap-2">
-                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                Uploading...
-              </span>
-            ) : (
-              'Upload Image'
-            )}
-          </button>
-        </div>
+        <button
+          onClick={handleUpload}
+          className="mt-4 bg-pink-600 text-white px-6 py-2 rounded hover:bg-pink-700 transition disabled:opacity-50"
+          disabled={uploading || selectedFiles.length === 0}
+        >
+          {uploading ? (
+            <span className="flex items-center gap-2">
+              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+              Uploading...
+            </span>
+          ) : (
+            'Upload Selected Images'
+          )}
+        </button>
       </div>
-
 
       {/* Gallery Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -151,7 +162,6 @@ const Gallery = () => {
                 Delete
               </button>
             </div>
-
           ))
         ) : (
           <p className="col-span-full text-gray-500 text-center">No images uploaded yet.</p>
