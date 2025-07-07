@@ -84,11 +84,11 @@ export const deleteImage = async (id) => {
     }
 };
 
-export const getAllApplications = async () => {
+export const getAllApplications = async (page = 1, limit = 20) => {
     try {
         const token = localStorage.getItem('token');
 
-        const res = await api.get('/all-applications', {
+        const res = await api.get(`/all-applications?page=${page}&limit=${limit}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -105,11 +105,11 @@ export const getAllApplications = async () => {
     }
 };
 
-export const getAllEnquiries = async () => {
+export const getAllEnquiries = async (page = 1, limit = 20) => {
     try {
         const token = localStorage.getItem('token');
 
-        const res = await api.get('/all-enquiries', {
+        const res = await api.get(`/all-enquiries?page=${page}&limit=${limit}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -124,31 +124,32 @@ export const getAllEnquiries = async () => {
         };
     }
 };
-export const getAllvisits = async () => {
+
+export const getAllvisits = async (page = 1, limit = 20) => {
     try {
         const token = localStorage.getItem('token');
-        const res = await api.get('/all-visits', {
+        const res = await api.get(`/all-visits?page=${page}&limit=${limit}`, {
             headers: {
-                Authorization: `Bearer ${token}`
-            }
+                Authorization: `Bearer ${token}`,
+            },
         });
 
-        // console.log("🚀 ~ getAllvisits ~ res.data:", res.data)
         return res.data;
     } catch (error) {
         console.error('Error fetching visits:', error);
         return {
             success: false,
-            message: error?.response?.data?.message || 'Something went wrong while fetching applications'
+            message: error?.response?.data?.message || 'Something went wrong while fetching visits',
         };
     }
-}
+};
 
-export const getAllTeacherApplications = async () => {
+
+export const getAllTeacherApplications = async (page = 1, limit = 20) => {
     try {
         const token = localStorage.getItem('token');
 
-        const res = await api.get('/all-teacher-applications', {
+        const res = await api.get(`/all-teacher-applications?page=${page}&limit=${limit}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -264,3 +265,13 @@ export const getDashboardCounts = async () => {
         return { success: false, message: 'Failed to fetch counts' };
     }
 };
+
+export const uploadVideos = async () => {
+    try {
+        const token = localStorage.getItem('token');
+
+
+    } catch (error) {
+
+    }
+}

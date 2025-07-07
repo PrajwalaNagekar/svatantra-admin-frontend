@@ -7,22 +7,25 @@ const Applications = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 20;
 
   useEffect(() => {
     const fetchApplications = async () => {
       setLoading(true);
-      const res = await getAllApplications();
-      // console.log("🚀 ~ fetchApplications ~ res:", res)
+      const res = await getAllApplications(page, limit);
       if (res?.success) {
-        setApplications(res.data|| []);
+        setApplications(res.data || []);
+        setTotalPages(res.totalPages || 1);
       } else {
-        setError(res?.data?.message || 'Failed to fetch applications');
+        setError(res?.message || 'Failed to fetch applications');
       }
       setLoading(false);
     };
 
     fetchApplications();
-  }, []);
+  }, [page]);
 
   const columns = [
     { header: 'Student Name', accessor: 'studentName' },
@@ -37,6 +40,12 @@ const Applications = () => {
       render: (row) => new Date(row.submittedAt).toLocaleString(),
     },
   ];
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
 
   return (
     <div className="p-6 md:p-10">
@@ -53,7 +62,32 @@ const Applications = () => {
       )}
 
       {!loading && !error && (
-        <Table columns={columns} data={applications} />
+        <>
+          <Table columns={columns} data={applications} />
+
+          {/* Pagination Controls */}
+          <div className="flex items-center justify-center mt-6 space-x-2">
+            <button
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page === 1}
+              className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded disabled:opacity-50"
+            >
+              Prev
+            </button>
+
+            <span className="font-semibold text-gray-700">
+              Page {page} of {totalPages}
+            </span>
+
+            <button
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page === totalPages}
+              className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        </>
       )}
     </div>
   );
