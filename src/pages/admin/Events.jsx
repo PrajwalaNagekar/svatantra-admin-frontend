@@ -20,6 +20,13 @@ const Events = () => {
   useEffect(() => {
     fetchEvents();
   }, []);
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
 
   const fetchEvents = async () => {
     setLoading(true);
@@ -243,10 +250,14 @@ const Events = () => {
                     className="w-full h-48 object-cover rounded mb-3"
                   />
                   <h4 className="text-lg font-bold text-gray-800">{event.name}</h4>
-                  <p className="text-sm text-gray-500 mb-1">
+                  {/* <p className="text-sm text-gray-500 mb-1">
                     {new Date(event.startDate).toLocaleDateString()} -{' '}
                     {new Date(event.endDate).toLocaleDateString()}
+                  </p> */}
+                  <p className="text-sm text-gray-500 mb-1">
+                    {formatDate(event.startDate)} - {formatDate(event.endDate)}
                   </p>
+
                   <p className="text-sm text-gray-600 mb-4">{event.description}</p>
                   <button
                     onClick={() => handleDeleteEvent(event._id)}

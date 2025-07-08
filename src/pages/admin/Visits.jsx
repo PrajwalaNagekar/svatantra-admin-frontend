@@ -40,7 +40,13 @@ const Visits = () => {
     { header: 'Mobile', accessor: 'mobile' },
     {
       header: 'Date',
-      render: (row) => new Date(row.date).toLocaleDateString(),
+      render: (row) => {
+        const date = new Date(row.date);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`; // D-M-Y format
+      },
     },
     {
       header: 'Time',

@@ -29,16 +29,31 @@ const Applications = () => {
 
   const columns = [
     { header: 'Student Name', accessor: 'studentName' },
-    { header: 'DOB', render: (row) => new Date(row.dob).toLocaleDateString() },
-    { header: 'Father\'s Name', accessor: 'fatherName' },
+    {
+      header: 'DOB',
+      render: (row) => {
+        const date = new Date(row.dob);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      }
+    }, { header: 'Father\'s Name', accessor: 'fatherName' },
     { header: 'Father\'s Phone', accessor: 'fatherPhone' },
     { header: 'Mother\'s Name', accessor: 'motherName' },
     { header: 'Mother\'s Phone', accessor: 'motherPhone' },
     { header: 'Address', accessor: 'address' },
     {
       header: 'Submitted At',
-      render: (row) => new Date(row.submittedAt).toLocaleString(),
-    },
+      render: (row) => {
+        const date = new Date(row.submittedAt);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const time = date.toLocaleTimeString(); // You can customize this too
+        return `${day}/${month}/${year}, ${time}`;
+      }
+    }
   ];
 
   const handlePageChange = (newPage) => {
