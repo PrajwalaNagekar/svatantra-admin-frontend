@@ -146,7 +146,7 @@ const Events = () => {
             />
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
               <label className="block mb-1 text-sm font-medium">Start Date</label>
               <input
@@ -168,6 +168,7 @@ const Events = () => {
               />
             </div>
           </div>
+
         </div>
 
         <div>
